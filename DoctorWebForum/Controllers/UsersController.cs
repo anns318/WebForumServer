@@ -91,6 +91,15 @@ namespace DoctorWebForum.Controllers
           {
               return Problem("Entity set 'ApplicationDbContext.Users'  is null.");
           }
+
+          if(_context.Users.Any(x=>x.UserName == user.UserName))
+            {
+                return BadRequest("Username is exits!");   
+            }
+          if(_context.Users.Any(x=>x.Email == user.Email))
+            {
+                return BadRequest("Email is exits!");
+            }
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 

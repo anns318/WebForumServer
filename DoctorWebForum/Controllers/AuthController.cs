@@ -2,6 +2,7 @@
 using Azure.Core;
 using DoctorWebForum.Data;
 using DoctorWebForum.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +30,7 @@ namespace DoctorWebForum.Controllers
 
         [HttpPost]
         [Route("Login")]
-        public async Task<ActionResult<string>> Login(UserVM User)
+        public async Task<ActionResult> Login(UserVM User)
         {
 
             var u = await _context.Users.FirstOrDefaultAsync(x => x.UserName == User.UserName);
@@ -48,8 +49,9 @@ namespace DoctorWebForum.Controllers
             var role = await _context.Roles.FirstOrDefaultAsync(x => x.Id == u.RoleId);
 
             var token = CreateToken(u,role.RoleName);
-
-            return token;
+            dynamic tokenObject = new System.Dynamic.ExpandoObject();
+            tokenObject.jwt = token;
+            return Ok(tokenObject);
         }
 
         [HttpPost]
@@ -61,7 +63,14 @@ namespace DoctorWebForum.Controllers
             {
                 return BadRequest();
             }
-
+            if (_context.Users.Any(x => x.UserName == user.UserName))
+            {
+                return BadRequest(new {message = "Username is exits!" });
+            }
+            if (_context.Users.Any(x => x.Email == user.Email))
+            {
+                return BadRequest(new { message = "Email is exits!" });
+            }
             var hashPassword = BCrypt.Net.BCrypt.HashPassword(user.HashedPassword);
             user.HashedPassword = hashPassword;
             user.CreateDate = DateTime.Now;
@@ -69,16 +78,20 @@ namespace DoctorWebForum.Controllers
 
             await _context.SaveChangesAsync();
 
-            return user;
+            return Ok(user);
         }
 
         private string CreateToken(User user,string role)
         {
-            List<Claim> claims = new List<Claim>
-            {
+            List<Claim> claims = new List<Claim> { 
+                new Claim("userId", user.Id.ToString()),
                 new Claim("username", user.UserName),
                 new Claim(ClaimTypes.Role,role),
-                new Claim("email",user.Email)
+                new Claim("role",role),
+                new Claim("email",user.Email),
+                new Claim("firstName",user.FirstName),
+                new Claim("lastName",user.LastName),
+                new Claim("avatar",user.avatarPath ?? "null")
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Appsettings:Jwt").Value!));
@@ -96,4 +109,9 @@ namespace DoctorWebForum.Controllers
         }
 
     }
+}
+
+
+public class TokenVM {
+    public string JWT { get; set; }
 }
