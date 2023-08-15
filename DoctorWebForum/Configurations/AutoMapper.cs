@@ -9,6 +9,8 @@ namespace DoctorWebForum.Configurations
         public AutoMapper()
         {
             CreateMap<User, UserVM>();
+            CreateMap<User, UserMessageVm>().ReverseMap();
+            CreateMap<Comment, CommentDto>().ReverseMap();
         }
     }
 }
