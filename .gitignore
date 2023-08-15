@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/DoctorWebForum/wwwroot/images/posts/
+/DoctorWebForum/wwwroot/images/users/
