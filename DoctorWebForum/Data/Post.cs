@@ -11,5 +11,7 @@ namespace DoctorWebForum.Data
         [ForeignKey("UserId")]
         public User? User { get; set; }
         public int UserId { get; set; }
+        public bool isHidden { get; set; } = false;
+        public ICollection<Comment>? Comments { get; set; }
     }
 }
