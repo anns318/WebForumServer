@@ -4,6 +4,7 @@ using DoctorWebForum.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DoctorWebForum.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230815065843_MessageEntity")]
+    partial class MessageEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -74,10 +77,6 @@ namespace DoctorWebForum.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FromUser");
-
-                    b.HasIndex("ToUser");
 
                     b.ToTable("Messages");
                 });
@@ -193,10 +192,10 @@ namespace DoctorWebForum.Migrations
                         new
                         {
                             Id = 1,
-                            CreateDate = new DateTime(2023, 8, 15, 14, 18, 23, 858, DateTimeKind.Local).AddTicks(2612),
+                            CreateDate = new DateTime(2023, 8, 15, 13, 58, 43, 730, DateTimeKind.Local).AddTicks(4834),
                             Email = "admin@gmail.com",
                             FirstName = "Toan",
-                            HashedPassword = "$2a$11$0zL/mN50hF90UNzPj.hgbunQgy0ya2sYz8K8smKMWmfYvEcVEibYW",
+                            HashedPassword = "$2a$11$RkTYB/oOHb/CjYI9LPNjPe.6mf5jYe7oPwcwcaRJS8HvoD.siJrMm",
                             LastName = "Le Nguyen",
                             RoleId = 1,
                             UserName = "admin"
@@ -218,23 +217,6 @@ namespace DoctorWebForum.Migrations
                     b.Navigation("Post");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DoctorWebForum.Data.Message", b =>
-                {
-                    b.HasOne("DoctorWebForum.Data.User", "FUser")
-                        .WithMany("messages")
-                        .HasForeignKey("FromUser")
-                        .IsRequired();
-
-                    b.HasOne("DoctorWebForum.Data.User", "TUser")
-                        .WithMany()
-                        .HasForeignKey("ToUser")
-                        .IsRequired();
-
-                    b.Navigation("FUser");
-
-                    b.Navigation("TUser");
                 });
 
             modelBuilder.Entity("DoctorWebForum.Data.Post", b =>
@@ -268,8 +250,6 @@ namespace DoctorWebForum.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Posts");
-
-                    b.Navigation("messages");
                 });
 #pragma warning restore 612, 618
         }
