@@ -61,7 +61,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 
 builder.Services.AddAutoMapper(typeof(Program));
 
-
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

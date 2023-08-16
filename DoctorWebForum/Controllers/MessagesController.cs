@@ -6,9 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DoctorWebForum.Data;
-using DoctorWebForum.Models;
-using System.Dynamic;
-using AutoMapper;
 
 namespace DoctorWebForum.Controllers
 {
@@ -17,12 +14,10 @@ namespace DoctorWebForum.Controllers
     public class MessagesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
 
-        public MessagesController(ApplicationDbContext context, IMapper mapper)
+        public MessagesController(ApplicationDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         // GET: api/Messages
@@ -37,33 +32,22 @@ namespace DoctorWebForum.Controllers
         }
 
         // GET: api/Messages/5
-        [HttpGet("{user1Id}/{user2Id}")]
-        public async Task<ActionResult<MessageVM>> GetMessage(int user1Id,int user2Id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Message>> GetMessage(int id)
         {
           if (_context.Messages == null)
           {
               return NotFound();
           }
+            var message = await _context.Messages.FindAsync(id);
 
-            var message = await _context.Messages.Where(m =>
-                (m.FromUser == user1Id && m.ToUser == user2Id) ||
-                (m.ToUser == user1Id && m.FromUser == user2Id)).OrderBy(m => m.CreateDate).Select(m=> new message { Messages = m.Messages,CreatedDate = m.CreateDate}).ToListAsync();
-
-            var user1 = await _context.Users.FindAsync(user1Id);
-            var user2 = await _context.Users.FindAsync(user2Id);
-
-            var messageVM = new MessageVM();
-            messageVM.User1 = _mapper.Map<UserMessageVm>(user1);
-            messageVM.User2 = _mapper.Map<UserMessageVm>(user2);
-            messageVM.Messages = message;
             if (message == null)
             {
                 return NotFound();
             }
 
-            return messageVM;
+            return message;
         }
-
 
         // PUT: api/Messages/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

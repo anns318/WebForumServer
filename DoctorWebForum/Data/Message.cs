@@ -5,16 +5,10 @@ namespace DoctorWebForum.Data
 {
     public class Message : BaseEntity
     {
-        [ForeignKey("FromUser")]
-        public User FUser { get; set; }
+        [ForeignKey("UserId")]
+        public User User { get; set; }
         [Required]
-        public int FromUser { get; set; }
-
-        [ForeignKey("ToUser")]
-        public User TUser { get; set; }
-        [Required]
-        public int ToUser { get; set; }
-
+        public int UserId { get; set; }
         [Required]
         public string Messages { get; set; }
 

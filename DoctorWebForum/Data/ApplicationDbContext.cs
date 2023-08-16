@@ -39,15 +39,10 @@ namespace DoctorWebForum.Data
                 .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull); // Or use DeleteBehavior.Cascade if needed
             modelBuilder.Entity<Message>()
-                .HasOne(m => m.FUser)
+                .HasOne(m => m.User)
                 .WithMany(m => m.messages)
-                .HasForeignKey(m => m.FromUser)
+                .HasForeignKey(m => m.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
-            modelBuilder.Entity<Message>()
-               .HasOne(m => m.TUser)
-               .WithMany()
-               .HasForeignKey(m => m.ToUser)
-               .OnDelete(DeleteBehavior.ClientSetNull);
         }
     }
 }
