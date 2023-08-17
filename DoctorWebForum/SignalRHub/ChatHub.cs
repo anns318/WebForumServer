@@ -1,7 +1,7 @@
 ﻿using DoctorWebForum.Data;
 using Microsoft.AspNetCore.SignalR;
 
-namespace DoctorWebForum
+namespace DoctorWebForum.SignalRHub
 {
     public class ChatHub : Hub
     {

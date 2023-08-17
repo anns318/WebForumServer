@@ -1,5 +1,6 @@
 using DoctorWebForum;
 using DoctorWebForum.Data;
+using DoctorWebForum.SignalRHub;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -83,6 +84,8 @@ app.UseStaticFiles();
 app.UseAuthorization();
 
 app.MapHub<ChatHub>("/chathub");
+app.MapHub<Notification>("/notification");
+
 
 app.MapControllers();
 
