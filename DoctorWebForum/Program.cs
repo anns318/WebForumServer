@@ -84,7 +84,7 @@ app.UseStaticFiles();
 app.UseAuthorization();
 
 app.MapHub<ChatHub>("/chathub");
-app.MapHub<Notification>("/notification");
+app.MapHub<NotificationHub>("/notification");
 
 
 app.MapControllers();

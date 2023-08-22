@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DoctorWebForum.Migrations
 {
     /// <inheritdoc />
-    public partial class ReCreateMigrations : Migration
+    public partial class reCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -53,6 +53,26 @@ namespace DoctorWebForum.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Messages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Messages = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Messages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Messages_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Posts",
                 columns: table => new
                 {
@@ -61,8 +81,6 @@ namespace DoctorWebForum.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    PostReact = table.Column<int>(type: "int", nullable: false),
-                    PostComment = table.Column<int>(type: "int", nullable: false),
                     isHidden = table.Column<bool>(type: "bit", nullable: false),
                     CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -102,6 +120,40 @@ namespace DoctorWebForum.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    FromUserId = table.Column<int>(type: "int", nullable: false),
+                    PostId = table.Column<int>(type: "int", nullable: false),
+                    HtmlNotification = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Notifications_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Notifications_Users_FromUserId",
+                        column: x => x.FromUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Notifications_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Roles",
                 columns: new[] { "Id", "RoleName" },
@@ -115,7 +167,7 @@ namespace DoctorWebForum.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "CreateDate", "Email", "FirstName", "HashedPassword", "LastName", "RoleId", "UserName", "avatarPath" },
-                values: new object[] { 1, new DateTime(2023, 8, 10, 19, 18, 35, 156, DateTimeKind.Local).AddTicks(56), "admin@gmail.com", "Toan", "$2a$11$lHPu6fTyId0XihtbGI7eWOmlMfwHHGsAB8fh.c6.qFwCUgUzbGPSK", "Le Nguyen", 1, "admin", null });
+                values: new object[] { 1, new DateTime(2023, 8, 20, 15, 8, 55, 472, DateTimeKind.Local).AddTicks(277), "admin@gmail.com", "Toan", "$2a$11$IRVw0UmqON2RTmB9a4qStOqrhEZcKhtYC0Iva5kj5MVwETgCLcFh2", "Le Nguyen", 1, "admin", null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_PostId",
@@ -125,6 +177,26 @@ namespace DoctorWebForum.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_UserId",
                 table: "Comments",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_UserId",
+                table: "Messages",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_FromUserId",
+                table: "Notifications",
+                column: "FromUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_PostId",
+                table: "Notifications",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_UserId",
+                table: "Notifications",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -143,6 +215,12 @@ namespace DoctorWebForum.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Comments");
+
+            migrationBuilder.DropTable(
+                name: "Messages");
+
+            migrationBuilder.DropTable(
+                name: "Notifications");
 
             migrationBuilder.DropTable(
                 name: "Posts");

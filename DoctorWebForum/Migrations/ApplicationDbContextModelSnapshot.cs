@@ -77,6 +77,41 @@ namespace DoctorWebForum.Migrations
                     b.ToTable("Messages");
                 });
 
+            modelBuilder.Entity("DoctorWebForum.Data.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FromUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NotificationContent")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FromUserId");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("DoctorWebForum.Data.Post", b =>
                 {
                     b.Property<int>("Id")
@@ -188,10 +223,10 @@ namespace DoctorWebForum.Migrations
                         new
                         {
                             Id = 1,
-                            CreateDate = new DateTime(2023, 8, 16, 15, 33, 8, 761, DateTimeKind.Local).AddTicks(2157),
+                            CreateDate = new DateTime(2023, 8, 20, 15, 49, 28, 662, DateTimeKind.Local).AddTicks(1840),
                             Email = "admin@gmail.com",
                             FirstName = "Toan",
-                            HashedPassword = "$2a$11$.JpiYMC9tVNyF2g25b7U3Ol31coQc7bq621RIdhZgbeM2Eym04lG2",
+                            HashedPassword = "$2a$11$A3qbRw3iBnRG1dBbC.neNuqjMUOOI9X7TcyG65IIFe8ciAjxJC3aW",
                             LastName = "Le Nguyen",
                             RoleId = 1,
                             UserName = "admin"
@@ -225,6 +260,32 @@ namespace DoctorWebForum.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("DoctorWebForum.Data.Notification", b =>
+                {
+                    b.HasOne("DoctorWebForum.Data.User", "FromUser")
+                        .WithMany("Notifications")
+                        .HasForeignKey("FromUserId")
+                        .IsRequired();
+
+                    b.HasOne("DoctorWebForum.Data.Post", "Post")
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DoctorWebForum.Data.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FromUser");
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("DoctorWebForum.Data.Post", b =>
                 {
                     b.HasOne("DoctorWebForum.Data.User", "User")
@@ -254,6 +315,8 @@ namespace DoctorWebForum.Migrations
             modelBuilder.Entity("DoctorWebForum.Data.User", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Notifications");
 
                     b.Navigation("Posts");
 

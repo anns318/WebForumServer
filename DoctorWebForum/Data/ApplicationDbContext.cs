@@ -15,7 +15,8 @@ namespace DoctorWebForum.Data
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments{ get; set; }
         public DbSet<Message> Messages { get; set; }
-
+        public DbSet<Notification> Notifications { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Role>().HasData(new Role {Id=1, RoleName = "Admin" }, new Role {Id=2,RoleName = "Doctor"},new Role {Id = 3, RoleName= "User"});
@@ -42,6 +43,16 @@ namespace DoctorWebForum.Data
                 .HasOne(m => m.User)
                 .WithMany(m => m.messages)
                 .HasForeignKey(m => m.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+            //modelBuilder.Entity<Notification>()
+            //    .HasOne(n => n.User)
+            //    .WithMany(n => n.Notifications)
+            //    .HasForeignKey(n => n.UserId)
+            //    .OnDelete(DeleteBehavior.ClientSetNull);
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.FromUser)
+                .WithMany(n => n.Notifications)
+                .HasForeignKey(n => n.FromUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
         }
     }

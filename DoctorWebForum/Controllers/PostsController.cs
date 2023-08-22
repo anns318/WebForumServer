@@ -64,7 +64,7 @@ namespace DoctorWebForum.Controllers
                 Username = p.User.UserName,
                 FirstName = p.User.FirstName,
                 LastName = p.User.LastName,
-                UserAvatar = p.User.avatarPath,
+                UserAvatar = p.User.avatarPath == null ? "/images/users/0.png" : p.User.avatarPath,
                 CreateDate = p.CreateDate
             }).FirstOrDefaultAsync(p => p.Id == id);
 
@@ -83,22 +83,22 @@ namespace DoctorWebForum.Controllers
             {
                 return NotFound();
             }
-            return await _context.Comments.Include(c => c.User).Include(c => c.Post).Where(p=>p.PostId == id)
+            var listComment = await _context.Comments.Include(c => c.User).Include(c => c.Post).Where(p=>p.PostId == id)
             .Select(cp => new CommentVM
             {
                 PostId = cp.PostId,
-                PostTitle = cp.Post.Title,
                 UserId = cp.User.Id,
                 UserName = cp.User.UserName,
-                UserAvatarPath = cp.User.avatarPath,
+                UserAvatarPath = cp.User.avatarPath == null ? "/images/users/0.png" : cp.User.avatarPath,
                 UserFirstName = cp.User.FirstName,
                 UserLastName = cp.User.LastName,
                 Comment = cp.comment,
                 CommentCreateDate = cp.CreateDate
             }).ToListAsync();
 
-
+            return listComment;
         }
+
 
         // PUT: api/Posts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

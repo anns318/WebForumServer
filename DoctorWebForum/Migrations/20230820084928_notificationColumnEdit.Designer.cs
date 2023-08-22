@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DoctorWebForum.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230810121835_ReCreateMigrations")]
-    partial class ReCreateMigrations
+    [Migration("20230820084928_notificationColumnEdit")]
+    partial class notificationColumnEdit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.9")
+                .HasAnnotation("ProductVersion", "7.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -55,6 +55,66 @@ namespace DoctorWebForum.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("DoctorWebForum.Data.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Messages")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("DoctorWebForum.Data.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FromUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NotificationContent")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FromUserId");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("DoctorWebForum.Data.Post", b =>
                 {
                     b.Property<int>("Id")
@@ -68,12 +128,6 @@ namespace DoctorWebForum.Migrations
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PostComment")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PostReact")
-                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -172,10 +226,10 @@ namespace DoctorWebForum.Migrations
                         new
                         {
                             Id = 1,
-                            CreateDate = new DateTime(2023, 8, 10, 19, 18, 35, 156, DateTimeKind.Local).AddTicks(56),
+                            CreateDate = new DateTime(2023, 8, 20, 15, 49, 28, 662, DateTimeKind.Local).AddTicks(1840),
                             Email = "admin@gmail.com",
                             FirstName = "Toan",
-                            HashedPassword = "$2a$11$lHPu6fTyId0XihtbGI7eWOmlMfwHHGsAB8fh.c6.qFwCUgUzbGPSK",
+                            HashedPassword = "$2a$11$A3qbRw3iBnRG1dBbC.neNuqjMUOOI9X7TcyG65IIFe8ciAjxJC3aW",
                             LastName = "Le Nguyen",
                             RoleId = 1,
                             UserName = "admin"
@@ -187,14 +241,48 @@ namespace DoctorWebForum.Migrations
                     b.HasOne("DoctorWebForum.Data.Post", "Post")
                         .WithMany("Comments")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.HasOne("DoctorWebForum.Data.User", "User")
                         .WithMany("Comments")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DoctorWebForum.Data.Message", b =>
+                {
+                    b.HasOne("DoctorWebForum.Data.User", "User")
+                        .WithMany("messages")
+                        .HasForeignKey("UserId")
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DoctorWebForum.Data.Notification", b =>
+                {
+                    b.HasOne("DoctorWebForum.Data.User", "FromUser")
+                        .WithMany("Notifications")
+                        .HasForeignKey("FromUserId")
+                        .IsRequired();
+
+                    b.HasOne("DoctorWebForum.Data.Post", "Post")
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DoctorWebForum.Data.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FromUser");
 
                     b.Navigation("Post");
 
@@ -206,7 +294,6 @@ namespace DoctorWebForum.Migrations
                     b.HasOne("DoctorWebForum.Data.User", "User")
                         .WithMany("Posts")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -232,7 +319,11 @@ namespace DoctorWebForum.Migrations
                 {
                     b.Navigation("Comments");
 
+                    b.Navigation("Notifications");
+
                     b.Navigation("Posts");
+
+                    b.Navigation("messages");
                 });
 #pragma warning restore 612, 618
         }

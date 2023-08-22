@@ -23,6 +23,7 @@ namespace DoctorWebForum.Data
         public IEnumerable<Post> Posts { get; set; } = new List<Post>();
         public IEnumerable<Comment> Comments { get; set; } = new List<Comment>();
         public IEnumerable<Message> messages{ get; set; } = new List<Message>();
+        public IEnumerable<Notification> Notifications{ get; set; } = new List<Notification>();
     }
 
 }

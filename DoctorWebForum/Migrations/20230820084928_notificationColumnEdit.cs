@@ -6,28 +6,38 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DoctorWebForum.Migrations
 {
     /// <inheritdoc />
-    public partial class ReCreateMigrations2 : Migration
+    public partial class notificationColumnEdit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.RenameColumn(
+                name: "HtmlNotification",
+                table: "Notifications",
+                newName: "NotificationContent");
+
             migrationBuilder.UpdateData(
                 table: "Users",
                 keyColumn: "Id",
                 keyValue: 1,
                 columns: new[] { "CreateDate", "HashedPassword" },
-                values: new object[] { new DateTime(2023, 8, 10, 19, 51, 36, 313, DateTimeKind.Local).AddTicks(7722), "$2a$11$NqdTx6UhQtp8use89rfUMOmlQdFAAVzgk0X7m/sn.DRRmALWTNyqe" });
+                values: new object[] { new DateTime(2023, 8, 20, 15, 49, 28, 662, DateTimeKind.Local).AddTicks(1840), "$2a$11$A3qbRw3iBnRG1dBbC.neNuqjMUOOI9X7TcyG65IIFe8ciAjxJC3aW" });
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.RenameColumn(
+                name: "NotificationContent",
+                table: "Notifications",
+                newName: "HtmlNotification");
+
             migrationBuilder.UpdateData(
                 table: "Users",
                 keyColumn: "Id",
                 keyValue: 1,
                 columns: new[] { "CreateDate", "HashedPassword" },
-                values: new object[] { new DateTime(2023, 8, 10, 19, 18, 35, 156, DateTimeKind.Local).AddTicks(56), "$2a$11$lHPu6fTyId0XihtbGI7eWOmlMfwHHGsAB8fh.c6.qFwCUgUzbGPSK" });
+                values: new object[] { new DateTime(2023, 8, 20, 15, 8, 55, 472, DateTimeKind.Local).AddTicks(277), "$2a$11$IRVw0UmqON2RTmB9a4qStOqrhEZcKhtYC0Iva5kj5MVwETgCLcFh2" });
         }
     }
 }
