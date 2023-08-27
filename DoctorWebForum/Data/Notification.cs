@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace DoctorWebForum.Data
 {
@@ -17,6 +18,7 @@ namespace DoctorWebForum.Data
         public User User { get; set; }
         public int UserId { get; set; }
         [ForeignKey("FromUserId")]
+        [JsonIgnore]
         public User FromUser { get; set; }
         public int FromUserId { get; set; }
         [ForeignKey("PostId")]

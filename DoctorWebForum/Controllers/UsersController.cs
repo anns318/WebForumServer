@@ -10,9 +10,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace DoctorWebForum.Controllers
 {
-    
+
     [Route("api/[controller]")]
-    [ApiController, Authorize(Roles = "Admin")]
     public class UsersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -26,10 +25,10 @@ namespace DoctorWebForum.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-          if (_context.Users == null)
-          {
-              return NotFound();
-          }
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
             return await _context.Users.ToListAsync();
         }
 
@@ -37,10 +36,10 @@ namespace DoctorWebForum.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-          if (_context.Users == null)
-          {
-              return NotFound();
-          }
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
             var user = await _context.Users.FindAsync(id);
 
             if (user == null)
@@ -50,7 +49,26 @@ namespace DoctorWebForum.Controllers
 
             return user;
         }
-
+        [HttpGet("profile/{username}")]
+        public async Task<ActionResult<User>> GetUserProfileByUsername(string username)
+        {
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
+            var user = await _context.Users.Include(x => x.UserDetails).FirstOrDefaultAsync(x => x.UserName == username);
+           
+            if (user == null)
+            {
+                return NotFound();
+            }
+            user.HashedPassword = null;
+            if (string.IsNullOrEmpty(user.avatarPath))
+            {
+                user.avatarPath = "/images/users/0.png";
+            }
+            return user;
+        }
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -87,16 +105,16 @@ namespace DoctorWebForum.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-          if (_context.Users == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.Users'  is null.");
-          }
-
-          if(_context.Users.Any(x=>x.UserName == user.UserName))
+            if (_context.Users == null)
             {
-                return BadRequest("Username is exits!");   
+                return Problem("Entity set 'ApplicationDbContext.Users'  is null.");
             }
-          if(_context.Users.Any(x=>x.Email == user.Email))
+
+            if (_context.Users.Any(x => x.UserName == user.UserName))
+            {
+                return BadRequest("Username is exits!");
+            }
+            if (_context.Users.Any(x => x.Email == user.Email))
             {
                 return BadRequest("Email is exits!");
             }

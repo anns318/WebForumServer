@@ -48,6 +48,27 @@ namespace DoctorWebForum.Controllers
             ).OrderByDescending(p => p.CreateDate).ToListAsync();
         }
 
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<IEnumerable<PostVM>>> GetPostsByUser(int userId)
+        {
+            if (_context.Posts == null)
+            {
+                return NotFound();
+            }
+            return await _context.Posts.Where(p => p.UserId == userId).Include(p => p.Comments).Select(p => new PostVM
+            {
+                Id = p.Id,
+                Title = p.Title,
+                ImageUrl = p.ImageUrl,
+                Username = p.User.UserName,
+                FirstName = p.User.FirstName,
+                LastName = p.User.LastName,
+                UserAvatar = p.User.avatarPath,
+                CreateDate = p.CreateDate,
+                Comments = p.Comments
+            }).OrderByDescending(p => p.CreateDate).ToListAsync();
+        }
+
         // GET: api/Posts/5
         [HttpGet("{id}")]
         public async Task<ActionResult<PostVM>> GetPost(int id)

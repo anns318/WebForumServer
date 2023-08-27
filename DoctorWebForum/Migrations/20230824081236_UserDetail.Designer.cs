@@ -4,6 +4,7 @@ using DoctorWebForum.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DoctorWebForum.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230824081236_UserDetail")]
+    partial class UserDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,7 +52,7 @@ namespace DoctorWebForum.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("DoctorWebForum.Data.Message", b =>
@@ -74,7 +77,7 @@ namespace DoctorWebForum.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Messages", (string)null);
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("DoctorWebForum.Data.Notification", b =>
@@ -109,7 +112,7 @@ namespace DoctorWebForum.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("DoctorWebForum.Data.Post", b =>
@@ -140,7 +143,7 @@ namespace DoctorWebForum.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("DoctorWebForum.Data.Role", b =>
@@ -156,7 +159,7 @@ namespace DoctorWebForum.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
 
                     b.HasData(
                         new
@@ -217,16 +220,16 @@ namespace DoctorWebForum.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            CreateDate = new DateTime(2023, 8, 25, 6, 32, 55, 795, DateTimeKind.Local).AddTicks(5802),
+                            CreateDate = new DateTime(2023, 8, 24, 15, 12, 36, 420, DateTimeKind.Local).AddTicks(5541),
                             Email = "admin@gmail.com",
                             FirstName = "Toan",
-                            HashedPassword = "$2a$11$GNcsJ9YkeLXpmw4VKxCQm.sf.LCclBCIg48PLADkKSv4rA9RVS5Ze",
+                            HashedPassword = "$2a$11$98NXgQng1M6ObzyEXsrrheB9owVAk3sSe1hppFOCP72IUmXqGq38C",
                             LastName = "Le Nguyen",
                             RoleId = 1,
                             UserName = "admin"
@@ -242,35 +245,40 @@ namespace DoctorWebForum.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CoverUrl")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("From")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Intro")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LiveAt")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StudyAt")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.Property<string>("WorkAt")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
-                    b.ToTable("UserDetails", (string)null);
+                    b.ToTable("UserDetails");
                 });
 
             modelBuilder.Entity("DoctorWebForum.Data.Comment", b =>
@@ -350,8 +358,8 @@ namespace DoctorWebForum.Migrations
             modelBuilder.Entity("DoctorWebForum.Data.UserDetail", b =>
                 {
                     b.HasOne("DoctorWebForum.Data.User", "User")
-                        .WithOne("UserDetails")
-                        .HasForeignKey("DoctorWebForum.Data.UserDetail", "UserId")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -370,9 +378,6 @@ namespace DoctorWebForum.Migrations
                     b.Navigation("Notifications");
 
                     b.Navigation("Posts");
-
-                    b.Navigation("UserDetails")
-                        .IsRequired();
 
                     b.Navigation("messages");
                 });
