@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DoctorWebForum.Data;
+using DoctorWebForum.Models;
 
 namespace DoctorWebForum.Controllers
 {
@@ -22,13 +23,21 @@ namespace DoctorWebForum.Controllers
 
         // GET: api/Messages
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Message>>> GetMessages()
+        public async Task<ActionResult<IEnumerable<UserMessageVm>>> GetMessages()
         {
           if (_context.Messages == null)
           {
               return NotFound();
           }
-            return await _context.Messages.ToListAsync();
+            return await _context.Messages.Include(x=>x.User).Select(x => new UserMessageVm
+            {
+                UserName = x.User.UserName,
+                AvatarPath = x.User.avatarPath,
+                LastName = x.User.LastName,
+                FirstName = x.User.FirstName,
+                Message = x.Messages,
+                CreateDate = x.CreateDate
+            } ).ToListAsync();
         }
 
         // GET: api/Messages/5

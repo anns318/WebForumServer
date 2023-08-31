@@ -25,7 +25,7 @@ namespace DoctorWebForum.Data
         public IEnumerable<Comment> Comments { get; set; } = new List<Comment>();
         public IEnumerable<Message> messages{ get; set; } = new List<Message>();
         public IEnumerable<Notification> Notifications{ get; set; } = new List<Notification>();
-        public UserDetail UserDetails { get; set; }
+        public UserDetail UserDetails { get; set; } 
     }
 
 }

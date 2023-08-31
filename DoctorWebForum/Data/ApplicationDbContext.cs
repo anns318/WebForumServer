@@ -54,7 +54,7 @@ namespace DoctorWebForum.Data
                 .WithMany(n => n.Notifications)
                 .HasForeignKey(n => n.FromUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
-            modelBuilder.Entity<User>().HasOne(x => x.UserDetails).WithOne(x => x.User);
+            //modelBuilder.Entity<User>().HasOne(x => x.UserDetails).WithOne(x => x.User);
             modelBuilder.Entity<UserDetail>()
                 .HasOne(x => x.User)
                 .WithOne(x => x.UserDetails);

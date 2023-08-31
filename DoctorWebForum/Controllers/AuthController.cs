@@ -57,13 +57,13 @@ namespace DoctorWebForum.Controllers
         [HttpPost]
         [Route("Register")]
 
-        public async Task<ActionResult<User>> Register(User user)
+        public async Task<ActionResult<User>> Register(RegisterDto user)
         {
             if (user == null)
             {
                 return BadRequest();
             }
-            if (_context.Users.Any(x => x.UserName == user.UserName))
+            if (_context.Users.Any(x => x.UserName == user.Username))
             {
                 return BadRequest(new {message = "Username is exits!" });
             }
@@ -71,10 +71,10 @@ namespace DoctorWebForum.Controllers
             {
                 return BadRequest(new { message = "Email is exits!" });
             }
-            var hashPassword = BCrypt.Net.BCrypt.HashPassword(user.HashedPassword);
-            user.HashedPassword = hashPassword;
-            user.CreateDate = DateTime.Now;
-            _context.Users.Add(user);
+            var hashPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            user.Password = hashPassword;
+            User user1 = new User { UserName = user.Username, Email = user.Email,HashedPassword = user.Password,FirstName = user.FirstName,LastName = user.LastName,RoleId = user.RoleId };
+            _context.Users.Add(user1);
 
             await _context.SaveChangesAsync();
 
