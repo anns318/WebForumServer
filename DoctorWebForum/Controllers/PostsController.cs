@@ -65,7 +65,8 @@ namespace DoctorWebForum.Controllers
                 LastName = p.User.LastName,
                 UserAvatar = p.User.avatarPath,
                 CreateDate = p.CreateDate,
-                Comments = p.Comments
+                Comments = p.Comments,
+                UserId = p.User.Id
             }).OrderByDescending(p => p.CreateDate).ToListAsync();
         }
 

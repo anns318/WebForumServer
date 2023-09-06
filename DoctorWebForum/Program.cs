@@ -1,5 +1,6 @@
 using DoctorWebForum;
 using DoctorWebForum.Data;
+using DoctorWebForum.Services;
 using DoctorWebForum.SignalRHub;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddSignalR();
 
+builder.Services.AddSingleton<IJwtService, JwtService>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {

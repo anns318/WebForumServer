@@ -2,6 +2,7 @@
 using Azure.Core;
 using DoctorWebForum.Data;
 using DoctorWebForum.Models;
+using DoctorWebForum.Services;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,13 +20,15 @@ namespace DoctorWebForum.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
-        private readonly IConfiguration _configuration;
+        private readonly IJwtService _jwtService;
+        //private readonly IConfiguration _configuration;
 
-        public AuthController(ApplicationDbContext context, IMapper mapper, IConfiguration configuration)
+        public AuthController(ApplicationDbContext context, IMapper mapper,IJwtService jwtService)
         {
             _context = context;
             _mapper = mapper;
-            _configuration = configuration;
+            _jwtService= jwtService;
+            //_configuration = configuration;
         }
 
         [HttpPost]
@@ -48,7 +51,7 @@ namespace DoctorWebForum.Controllers
             }
             var role = await _context.Roles.FirstOrDefaultAsync(x => x.Id == u.RoleId);
 
-            var token = CreateToken(u,role.RoleName);
+            var token = _jwtService.CreateToken(u,role.RoleName);
             dynamic tokenObject = new System.Dynamic.ExpandoObject();
             tokenObject.jwt = token;
             return Ok(tokenObject);
@@ -81,32 +84,32 @@ namespace DoctorWebForum.Controllers
             return Ok(user);
         }
 
-        private string CreateToken(User user,string role)
-        {
-            List<Claim> claims = new List<Claim> { 
-                new Claim("userId", user.Id.ToString()),
-                new Claim("username", user.UserName),
-                new Claim(ClaimTypes.Role,role),
-                new Claim("role",role),
-                new Claim("email",user.Email),
-                new Claim("firstName",user.FirstName),
-                new Claim("lastName",user.LastName),
-                new Claim("avatar",user.avatarPath ?? "null")
-            };
+        //public string CreateToken(User user,string role)
+        //{
+        //    List<Claim> claims = new List<Claim> { 
+        //        new Claim("userId", user.Id.ToString()),
+        //        new Claim("username", user.UserName),
+        //        new Claim(ClaimTypes.Role,role),
+        //        new Claim("role",role),
+        //        new Claim("email",user.Email),
+        //        new Claim("firstName",user.FirstName),
+        //        new Claim("lastName",user.LastName),
+        //        new Claim("avatar",user.avatarPath ?? "null")
+        //    };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Appsettings:Jwt").Value!));
+        //    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Appsettings:Jwt").Value!));
 
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+        //    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddDays(5),
-                signingCredentials: creds
+        //    var token = new JwtSecurityToken(
+        //        claims: claims,
+        //        expires: DateTime.Now.AddDays(5),
+        //        signingCredentials: creds
 
-                );
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-            return jwt;
-        }
+        //        );
+        //    var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+        //    return jwt;
+        //}
 
     }
 }

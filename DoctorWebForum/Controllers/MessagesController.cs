@@ -37,7 +37,7 @@ namespace DoctorWebForum.Controllers
                 FirstName = x.User.FirstName,
                 Message = x.Messages,
                 CreateDate = x.CreateDate
-            } ).ToListAsync();
+            } ).OrderBy(x=>x.CreateDate).ToListAsync();
         }
 
         // GET: api/Messages/5
